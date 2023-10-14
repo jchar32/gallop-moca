@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import butter, filtfilt
 
 
-def lowpass_filter(data: np.ndarray, cutoff: int, Fs: int, order: int = 2) -> np.ndarray:
+def lowpass_filter(data: np.ndarray, cutoff: float, Fs: int, order: int = 2) -> np.ndarray:
     """perform simple lowpass butterworth filter on signal that may contain NaNs
 
     Args:
@@ -16,7 +16,7 @@ def lowpass_filter(data: np.ndarray, cutoff: int, Fs: int, order: int = 2) -> np
     """
     b, a = butter(order, cutoff, btype="low", analog=False, fs=Fs)
     if np.sum(~np.isfinite(data)) == 0:
-        return filtfilt(b, a, data)
+        return filtfilt(b, a, data, method="pad", padlen=max(data.shape) - 1)
 
     # init output array
     data_out = np.full(data.shape, np.nan)
@@ -25,7 +25,7 @@ def lowpass_filter(data: np.ndarray, cutoff: int, Fs: int, order: int = 2) -> np
         non_nan_idx = np.where(np.isfinite(data))[0]
         clean_signal = data[non_nan_idx]
 
-        y = filtfilt(b, a, clean_signal)
+        y = filtfilt(b, a, clean_signal, method="pad", padlen=max(clean_signal.shape) - 1)
         np.put(data_out, non_nan_idx, y)
     else:
         # iterate over each axis
@@ -33,7 +33,7 @@ def lowpass_filter(data: np.ndarray, cutoff: int, Fs: int, order: int = 2) -> np
             non_nan_idx = np.where(np.isfinite(data[axis, :]))[0]
             clean_signal = data[axis, non_nan_idx]
 
-            y = filtfilt(b, a, clean_signal)
+            y = filtfilt(b, a, clean_signal, method="pad", padlen=max(clean_signal.shape) - 1)
             np.put(data_out[axis, :], non_nan_idx, y)
 
     return data_out
