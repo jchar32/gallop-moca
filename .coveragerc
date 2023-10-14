@@ -1,0 +1,7 @@
+[report]
+omit =
+    setup.py
+    gallop/__main__.py
+    gallop/_version.py
+    versioneer.py
+    tests/*
