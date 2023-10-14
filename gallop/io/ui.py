@@ -16,9 +16,7 @@ def get_path(wildcard: str = "") -> str:
     app = wx.App(redirect=False)
 
     style = wx.FD_OPEN | wx.FD_FILE_MUST_EXIST | wx.STAY_ON_TOP
-    dialog = wx.FileDialog(
-        None, "Select", defaultDir=current_dir, wildcard=wildcard, style=style
-    )
+    dialog = wx.FileDialog(None, "Select", defaultDir=current_dir, wildcard=wildcard, style=style)
     if dialog.ShowModal() == wx.ID_OK:
         path: str = dialog.GetPath()
     else:

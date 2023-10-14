@@ -72,11 +72,7 @@ def parse_c3d(c3d_data):
     axes = ["x", "y", "z", "w"]
     channel = point_params["LABELS"]
     point_collection_time_sec = point_params["last_frame"] / point_params["RATE"]
-    time = list(
-        np.array(
-            np.linspace(0, point_collection_time_sec, point_params["last_frame"] + 1)
-        )
-    )
+    time = list(np.array(np.linspace(0, point_collection_time_sec, point_params["last_frame"] + 1)))
 
     markers: xr.DataArray = xr.DataArray(
         marker_data,
@@ -93,9 +89,7 @@ def parse_c3d(c3d_data):
     # ** force platform configurations
     for param in c3d_data["parameters"]["FORCE_PLATFORM"]:
         try:
-            analog_params[param] = c3d_data["parameters"]["FORCE_PLATFORM"][param][
-                "value"
-            ]
+            analog_params[param] = c3d_data["parameters"]["FORCE_PLATFORM"][param]["value"]
         except KeyError:
             continue
         analog_params[param] = c3d_data["parameters"]["FORCE_PLATFORM"][param]["value"]
@@ -114,12 +108,8 @@ def parse_c3d(c3d_data):
             analog_params[param] = c3d_data["parameters"]["ANALOG"][param]["value"][0]
 
     # ** Check the channels to determine the number of used Force Platforms
-    unused_FP_channels = [
-        idx for idx, value in enumerate(analog_params["LABELS"]) if value == ""
-    ]
-    used_FP_channels = [
-        idx for idx, value in enumerate(analog_params["LABELS"]) if value != ""
-    ]
+    unused_FP_channels = [idx for idx, value in enumerate(analog_params["LABELS"]) if value == ""]
+    used_FP_channels = [idx for idx, value in enumerate(analog_params["LABELS"]) if value != ""]
     num_FP_used = int(len(used_FP_channels) / 6)  # assumes 6 channels per FP
 
     analog_params["UNUSED_CHANNEL_IDX"] = unused_FP_channels
@@ -130,24 +120,14 @@ def parse_c3d(c3d_data):
     raw_analog_data = np.zeros((6, num_FP_used, analog_params["last_frame"] + 1))
     for plate in range(num_FP_used):
         if plate == 0:
-            raw_analog_data[: (1 + plate) * 6, plate, :] = c3d_data["data"]["analogs"][
-                0, : (1 + plate) * 6, :
-            ]
+            raw_analog_data[: (1 + plate) * 6, plate, :] = c3d_data["data"]["analogs"][0, : (1 + plate) * 6, :]
         else:
-            raw_analog_data[: plate * 6, plate, :] = c3d_data["data"]["analogs"][
-                0, (plate * 6) : (1 + plate) * 6, :
-            ]
+            raw_analog_data[: plate * 6, plate, :] = c3d_data["data"]["analogs"][0, (plate * 6) : (1 + plate) * 6, :]
 
     channel = ["fx", "fy", "fz", "mx", "my", "mz"]
     plate = [f"FP{i+1}" for i in range(num_FP_used)]
-    analog_collection_time_sec = (
-        analog_params["last_frame"] / analog_params["frame_rate"]
-    )
-    time = list(
-        np.array(
-            np.linspace(0, analog_collection_time_sec, analog_params["last_frame"] + 1)
-        )
-    )
+    analog_collection_time_sec = analog_params["last_frame"] / analog_params["frame_rate"]
+    time = list(np.array(np.linspace(0, analog_collection_time_sec, analog_params["last_frame"] + 1)))
 
     raw_analog: xr.DataArray = xr.DataArray(
         raw_analog_data,
