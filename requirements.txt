@@ -1,8 +1,11 @@
 # List required packages in this file, one per line.
-xarray
-pandas
+python=3.12
+pip
 numpy
-dataclasses
+pandas
+xarray
+ipywidgets
+plotly
 ezc3d
 scipy
 wxpython

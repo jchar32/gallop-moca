@@ -1,1 +1,4 @@
+# SPDX-FileCopyrightText: 2024 Jesse Charlton
+# SPDX-License-Identifier: MIT
 include versioneer.py
+include gallop/*.py

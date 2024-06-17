@@ -63,5 +63,5 @@ target/
 
 # build-development and sandbox components
 dev data/
-gallop/sandbox.py
+sandbox*
 todo_and_package_notes.txt
